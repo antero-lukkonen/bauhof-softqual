@@ -3,6 +3,7 @@ package bauhof.pages;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import org.openqa.selenium.By;
@@ -24,24 +25,25 @@ public class SearchResultsPage extends BasePage {
 	}
 
 	public ProductListItem getResultByName(String name) {
-		return this.getResultElements()
-			.map(toListItem)
-			.filter(x -> x.getName().toLowerCase().equals(name.toLowerCase()))
+		Predicate<ProductListItem> predicate = x -> x.getName().toLowerCase().equals(name.toLowerCase());
+		
+		return this.getResults()
+			.filter(predicate)
 			.findFirst()
 			.orElse(null);				
 	}
 
 	public ProductListItem getFirstResult() {
-		return getResultElements()
+		return getResults()
 			.findFirst()
-			.map(toListItem)
 			.orElse(null);	
 	}
 
-	private Stream<WebElement> getResultElements() {
+	private Stream<ProductListItem> getResults() {
 		return driver
 			.findElements(By.cssSelector("div.product-item-info"))
-			.stream();
+			.stream()
+			.map(toListItem);
 	}
 	
 	private static Function<? super WebElement, ? extends ProductListItem> toListItem = x -> new ProductListItem(
