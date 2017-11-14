@@ -25,12 +25,7 @@ public class SearchResultsPage extends BasePage {
 	}
 
 	public ProductListItem getResultByName(String name) {
-		Predicate<ProductListItem> predicate = x -> x.getName().toLowerCase().equals(name.toLowerCase());
-		
-		return this.getResults()
-			.filter(predicate)
-			.findFirst()
-			.orElse(null);				
+		return getResultBy(x -> x.getName().toLowerCase().equals(name.toLowerCase()));				
 	}
 
 	public ProductListItem getFirstResult() {
@@ -39,6 +34,13 @@ public class SearchResultsPage extends BasePage {
 			.orElse(null);	
 	}
 
+	private ProductListItem getResultBy(Predicate<ProductListItem> predicate) {
+		return this.getResults()
+			.filter(predicate)
+			.findFirst()
+			.orElse(null);
+	}
+	
 	private Stream<ProductListItem> getResults() {
 		return driver
 			.findElements(By.cssSelector("div.product-item-info"))
