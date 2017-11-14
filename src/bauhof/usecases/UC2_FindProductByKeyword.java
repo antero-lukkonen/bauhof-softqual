@@ -13,9 +13,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 
 import bauhof.pages.HomePage;
+import bauhof.pages.ProductListItem;
 import bauhof.pages.SearchResultsPage;
 import io.github.bonigarcia.wdm.ChromeDriverManager;
 
@@ -37,12 +39,39 @@ public class UC2_FindProductByKeyword {
 	
 	@Test
 	public void resultsPageContainsSearchedItem() throws UnsupportedEncodingException {		
-		String expectedProductName = "LIHVMASIN BO3710 180W MAKITA";
+		String expectedProductName = "LIHVMASIN BO3710 180W MAKITA";			
+		String searchString = "Lihvmasin";
 		
-		SearchResultsPage page = new SearchResultsPage(driver, this.baseUri);
-		page.searchFor("Lihvmasin");
+		SearchResultsPage page = searchFor(searchString);
 		
 		assertThat(page.getResultByName(expectedProductName), is(not(nullValue())));	
+	}
+	
+	@Test
+	public void searchResultItemContainsProductName() throws UnsupportedEncodingException {		
+		String searchString = "Lihvmasin";
+		
+		ProductListItem item = getAnySearchResult(searchString);
+		
+		assertThat(item.getName(), is(not(nullValue())));	
+	}
+	
+	@Test
+	public void searchResultItemContainsPriceInEuro() throws UnsupportedEncodingException {		
+		String searchString = "Lihvmasin";
+		
+		ProductListItem item = getAnySearchResult(searchString);
+		
+		assertThat(item.getPrice(), endsWith("€"));	
+	}
+	
+	@Test
+	public void searchResultItemContainsAddToCartButton() throws UnsupportedEncodingException {		
+		String searchString = "Lihvmasin";
+		
+		ProductListItem item = getAnySearchResult(searchString);
+		
+		assertThat(item.getAddToCartButton(), is(not(nullValue())));	
 	}
 	
 	@BeforeAll
@@ -58,5 +87,13 @@ public class UC2_FindProductByKeyword {
 	@AfterEach
 	public void afterEachTest() {
 		driver.close();
+	}	
+	
+	private ProductListItem getAnySearchResult(String searchString) throws UnsupportedEncodingException {
+		return searchFor(searchString).getFirstResult();
+	}
+	
+	private SearchResultsPage searchFor(String searchString) throws UnsupportedEncodingException {
+		return new SearchResultsPage(this.driver, this.baseUri).searchFor(searchString);
 	}
 }
