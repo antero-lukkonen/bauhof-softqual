@@ -50,6 +50,6 @@ public class SearchResultsPage extends BasePage {
 	
 	private static Function<? super WebElement, ? extends ProductListItem> toListItem = x -> new ProductListItem(
 			x.findElement(By.className("price")).getText(),
-			x.findElement(By.cssSelector("button.tocart")),
+			new Clickable(x.findElement(By.cssSelector("button.tocart"))::click),
 			x.findElement(By.cssSelector("a.product-item-link")).getText());
 }

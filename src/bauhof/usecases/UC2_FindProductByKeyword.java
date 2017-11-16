@@ -74,6 +74,17 @@ public class UC2_FindProductByKeyword {
 		assertThat(item.getAddToCartButton(), is(not(nullValue())));	
 	}
 	
+	@Test
+	public void clickingOnAddToCartButton() throws UnsupportedEncodingException {		
+		String searchString = "Lihvmasin";
+		
+		getAnySearchResult(searchString)
+			.getAddToCartButton()
+			.click();
+
+		assertThat(driver.getCurrentUrl(), startsWith(new SearchResultsPage(driver, baseUri).getUriFor(searchString)));	
+	}
+	
 	@BeforeAll
 	public void beforeAllTests() {
 		ChromeDriverManager.getInstance().setup();
