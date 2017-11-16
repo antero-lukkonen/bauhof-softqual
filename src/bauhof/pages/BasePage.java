@@ -12,7 +12,7 @@ public class BasePage {
 		this.driver = driver;
 	}
 
-	public BasePage go() {
+	public BasePage navigateTo() {
 		driver.get(this.uri);
 		return this;
 	}

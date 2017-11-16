@@ -1,41 +1,19 @@
 package bauhof.usecases;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 
 import bauhof.pages.HomePage;
-import io.github.bonigarcia.wdm.ChromeDriverManager;
+import bauhof.usecases.BaseTemplate;
 
 @TestInstance(Lifecycle.PER_CLASS)
-public class UC1_FindProductByCategory {	
-	private WebDriver driver;
-	private String baseUri = "https://www.bauhof.ee";
-	
+public class UC1_FindProductByCategory extends BaseTemplate {
+
 	@Test
 	public void kkkk() {
-		HomePage page = (HomePage) new HomePage(driver, baseUri).go().maximize();
+		HomePage page = (HomePage) new HomePage(driver, baseUri).navigateTo();
 		page.openMainMenu();
 
-	}	
-	
-	@BeforeAll
-	public void beforeAllTests() {
-		ChromeDriverManager.getInstance().setup();
-	}
-	
-	@BeforeEach
-	public void beforeEachTest() {	
-		driver = new ChromeDriver();
-	}
-	
-	@AfterEach
-	public void afterEachTest() {
-		driver.close();
 	}
 }

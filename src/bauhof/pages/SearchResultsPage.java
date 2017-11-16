@@ -25,29 +25,21 @@ public class SearchResultsPage extends BasePage {
 	}
 
 	public ProductListItem getResultByName(String name) {
-		return getResultBy(x -> x.getName().toLowerCase().equals(name.toLowerCase()));				
+		return getResultBy(x -> x.getName().toLowerCase().equals(name.toLowerCase()));
 	}
 
 	public ProductListItem getFirstResult() {
-		return getResults()
-			.findFirst()
-			.orElse(null);	
+		return getResults().findFirst().orElse(null);
 	}
 
 	private ProductListItem getResultBy(Predicate<ProductListItem> predicate) {
-		return this.getResults()
-			.filter(predicate)
-			.findFirst()
-			.orElse(null);
+		return this.getResults().filter(predicate).findFirst().orElse(null);
 	}
-	
+
 	private Stream<ProductListItem> getResults() {
-		return driver
-			.findElements(By.cssSelector("div.product-item-info"))
-			.stream()
-			.map(toListItem);
+		return driver.findElements(By.cssSelector("div.product-item-info")).stream().map(toListItem);
 	}
-	
+
 	private static Function<? super WebElement, ? extends ProductListItem> toListItem = x -> new ProductListItem(
 			x.findElement(By.className("price")).getText(),
 			new Clickable(x.findElement(By.cssSelector("button.tocart"))::click),

@@ -16,11 +16,11 @@ public class ProductListItem {
 		return price;
 	}
 
-	public Clickable getAddToCartButton() {		
+	public Clickable getAddToCartButton() {
 		return this.addToCartButton;
 	}
 
-	public String getName() {		
+	public String getName() {
 		return this.name;
 	}
 }
