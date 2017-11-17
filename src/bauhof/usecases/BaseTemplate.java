@@ -3,7 +3,6 @@ package bauhof.usecases;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
