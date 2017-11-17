@@ -1,6 +1,8 @@
 package bauhof.pages;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -11,16 +13,16 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 public class SearchResultsPage extends BasePage {
-	public SearchResultsPage(WebDriver driver, String baseUri) {
+	public SearchResultsPage(WebDriver driver, URI baseUri) {
 		super(driver, baseUri);
 	}
 
-	public String getUriFor(String searchedItem) throws UnsupportedEncodingException {
-		return this.uri + "/catalogsearch/result/?q=" + URLEncoder.encode(searchedItem, "UTF-8");
+	public URI getUriFor(String searchedItem) throws UnsupportedEncodingException, URISyntaxException {
+		return new URI(this.getUri() + "/catalogsearch/result/?q=" + URLEncoder.encode(searchedItem, "UTF-8")).normalize();
 	}
 
-	public SearchResultsPage searchFor(String searchedItem) throws UnsupportedEncodingException {
-		driver.get(this.getUriFor(searchedItem));
+	public SearchResultsPage searchFor(String searchedItem) throws UnsupportedEncodingException, URISyntaxException {
+		driver.get(this.getUriFor(searchedItem).toString());
 		return this;
 	}
 

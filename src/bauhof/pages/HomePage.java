@@ -1,5 +1,7 @@
 package bauhof.pages;
 
+import java.net.URI;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -7,7 +9,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 
 public class HomePage extends BasePage {
-	public HomePage(WebDriver driver, String uri) {
+	public HomePage(WebDriver driver, URI uri) {
 		super(driver, uri);
 	}
 
@@ -26,7 +28,7 @@ public class HomePage extends BasePage {
 		WebElement btn = driver.findElement(By.cssSelector("button.action.search"));
 		JavascriptExecutor js = (JavascriptExecutor) driver;
 		js.executeScript("arguments[0].click();", btn);
-		return new SearchResultsPage(this.driver, this.uri);
+		return new SearchResultsPage(this.driver, this.getUri());
 	}
 
 	/** FIXME: Not working properly due to JS callback hell on client side */

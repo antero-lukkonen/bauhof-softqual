@@ -1,5 +1,8 @@
 package bauhof.usecases;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.jupiter.api.AfterEach;
@@ -21,7 +24,7 @@ import bauhof.pages.BaseContants;
 public class BaseTemplate {
 
 	protected WebDriver driver;
-	protected String baseUri;
+	protected URI baseUri;
 
 	@Rule
 	public TestRule rule = new TestWatcher() {
@@ -48,8 +51,8 @@ public class BaseTemplate {
 	};
 
 	@BeforeAll
-	public void beforeAllTests() {
-		baseUri = BaseContants.BASE_URI;
+	public void beforeAllTests() throws URISyntaxException {
+		baseUri = new URI(BaseContants.BASE_URI);
 		ChromeDriverManager.getInstance().setup();
 	}
 

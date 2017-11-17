@@ -1,19 +1,25 @@
 package bauhof.pages;
 
+import java.net.URI;
+
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class BasePage {
 
 	protected WebDriver driver;
-	protected String uri;
+	private URI uri;
 
-	public BasePage(WebDriver driver, String uri) {
+	public BasePage(WebDriver driver, URI uri) {
 		this.uri = uri;
 		this.driver = driver;
 	}
 
 	public BasePage navigateTo() {
-		driver.get(this.uri);
+		driver.get(this.uri.toString());
 		return this;
 	}
 
@@ -22,4 +28,16 @@ public class BasePage {
 		return this;
 	}
 
+	public URI getUri() {
+		return uri.normalize();
+	}
+	
+	public void waitForRefreshAfter(Runnable action) {		
+		WebElement element = driver.findElement(By.tagName("body"));
+		
+		action.run();
+		
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.stalenessOf(element));
+	}
 }
