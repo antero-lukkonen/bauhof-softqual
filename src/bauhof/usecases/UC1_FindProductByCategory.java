@@ -1,25 +1,28 @@
 package bauhof.usecases;
 
+import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertThat;
 
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 
 import bauhof.pages.CategoryPage;
-import bauhof.pages.Clickable;
+import bauhof.pages.ProductListItem;
 import bauhof.pages.SubcategoryPage;
 
 @TestInstance(Lifecycle.PER_CLASS)
 public class UC1_FindProductByCategory extends BaseTemplate {
 
     private String category = "aiakaubad";
+    private String subCategory;
 
     @Test
     public void categoryPageContainsSubcategories() {
@@ -34,28 +37,62 @@ public class UC1_FindProductByCategory extends BaseTemplate {
         String subCategory = "aiakatted";
 
         CategoryPage page = openCategory(category);
-        SubcategoryPage subPage = openSubcategory(page, subCategory);
+        SubcategoryPage subPage = page.openSubcategory(subCategory);
 
         assertThat(driver.getCurrentUrl(),
                 is(subPage.getUriFor(category, subCategory).toString()));
     }
 
-    private SubcategoryPage openSubcategory(CategoryPage page,
-            String subCategory) {
+    @Test
+    public void subCategoryPageContainsProductList() {
+        subCategory = "aiakatted";
 
-        Runnable throwNotFound = () -> {
-            throw new RuntimeException("No category found. Categories: "
-                    + page.getSubCategories().map(x -> x.getName())
-                            .collect(Collectors.joining(", ")));
-        };
+        SubcategoryPage page = (SubcategoryPage) new SubcategoryPage(driver,
+                baseUri, category, subCategory).navigateTo();
 
-        Predicate<? super Clickable> predicate = x -> x.getName()
-                .equals(subCategory);
+        assertThat(getAnyProduct(page), is(not(nullValue())));
+    }
 
-        page.getSubCategories().filter(predicate).findFirst()
-                .ifPresentOrElse(x -> x.click(), throwNotFound);
+    @Test
+    public void listItemContainsPriceInEuro()
+            throws UnsupportedEncodingException {
+        ProductListItem item = selectAnyProduct();
 
-        return new SubcategoryPage(driver, baseUri);
+        assertThat(item.getPrice(), endsWith("€"));
+    }
+
+    @Test
+    public void listItemContainsAddToCartButton()
+            throws UnsupportedEncodingException {
+        ProductListItem item = selectAnyProduct();
+
+        assertThat(item.getAddToCartButton(), is(not(nullValue())));
+    }
+
+    @Test
+    public void listItemContainsProductName()
+            throws UnsupportedEncodingException {
+        ProductListItem item = selectAnyProduct();
+
+        assertThat(item.getName(), is(not(nullValue())));
+    }
+
+    @Test
+    public void clickingOnAddToCartButtonAddsNewItemToCart()
+            throws UnsupportedEncodingException, URISyntaxException {
+
+        selectAnyProduct().getAddToCartButton().click();
+
+        assertThat(driver.getCurrentUrl(),
+                startsWith(new SubcategoryPage(driver, baseUri)
+                        .getUriFor(category, subCategory).toString()));
+
+    }
+
+    private ProductListItem selectAnyProduct() {
+        SubcategoryPage page = (SubcategoryPage) new SubcategoryPage(driver,
+                baseUri, category, subCategory).navigateTo();
+        return getAnyProduct(page);
     }
 
     private CategoryPage openCategory(String cat) {
@@ -63,5 +100,9 @@ public class UC1_FindProductByCategory extends BaseTemplate {
                 cat).navigateTo();
         page.maximize();
         return page;
+    }
+
+    private ProductListItem getAnyProduct(SubcategoryPage page) {
+        return page.getProducts().findAny().get();
     }
 }
