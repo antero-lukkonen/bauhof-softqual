@@ -10,34 +10,34 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class BasePage {
 
-	protected WebDriver driver;
-	private URI uri;
+    protected WebDriver driver;
+    private URI uri;
 
-	public BasePage(WebDriver driver, URI uri) {
-		this.uri = uri;
-		this.driver = driver;
-	}
+    public BasePage(WebDriver driver, URI uri) {
+        this.uri = uri.normalize();
+        this.driver = driver;
+    }
 
-	public BasePage navigateTo() {
-		driver.get(this.uri.toString());
-		return this;
-	}
+    public BasePage navigateTo() {
+        driver.get(this.uri.toString());
+        return this;
+    }
 
-	public BasePage maximize() {
-		driver.manage().window().maximize();
-		return this;
-	}
+    public BasePage maximize() {
+        driver.manage().window().maximize();
+        return this;
+    }
 
-	public URI getUri() {
-		return uri.normalize();
-	}
-	
-	public void waitForRefreshAfter(Runnable action) {		
-		WebElement element = driver.findElement(By.tagName("body"));
-		
-		action.run();
-		
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-		wait.until(ExpectedConditions.stalenessOf(element));
-	}
+    public URI getUri() {
+        return uri.normalize();
+    }
+
+    public void waitForRefreshAfter(Runnable action) {
+        WebElement element = driver.findElement(By.tagName("body"));
+
+        action.run();
+
+        WebDriverWait wait = new WebDriverWait(driver, 10);
+        wait.until(ExpectedConditions.stalenessOf(element));
+    }
 }
