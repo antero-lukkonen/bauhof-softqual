@@ -34,6 +34,10 @@ public class SubcategoryPage extends BasePage {
                 .map(toListItem);
     }
 
+    public ProductListItem getAnyProduct() {
+        return getProducts().findAny().get();
+    }
+
     private static Function<? super WebElement, ? extends ProductListItem> toListItem = x -> new ProductListItem(
             x.findElement(By.className("price")).getText(),
             new Clickable(x.findElement(By.cssSelector("button.tocart"))::click,

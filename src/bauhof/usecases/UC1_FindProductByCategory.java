@@ -50,13 +50,13 @@ public class UC1_FindProductByCategory extends BaseTemplate {
         SubcategoryPage page = (SubcategoryPage) new SubcategoryPage(driver,
                 baseUri, category, subCategory).navigateTo();
 
-        assertThat(getAnyProduct(page), is(not(nullValue())));
+        assertThat(page.getAnyProduct(), is(not(nullValue())));
     }
 
     @Test
     public void listItemContainsPriceInEuro()
             throws UnsupportedEncodingException {
-        ProductListItem item = selectAnyProduct();
+        ProductListItem item = getAnyProduct();
 
         assertThat(item.getPrice(), endsWith("€"));
     }
@@ -64,7 +64,7 @@ public class UC1_FindProductByCategory extends BaseTemplate {
     @Test
     public void listItemContainsAddToCartButton()
             throws UnsupportedEncodingException {
-        ProductListItem item = selectAnyProduct();
+        ProductListItem item = getAnyProduct();
 
         assertThat(item.getAddToCartButton(), is(not(nullValue())));
     }
@@ -72,7 +72,7 @@ public class UC1_FindProductByCategory extends BaseTemplate {
     @Test
     public void listItemContainsProductName()
             throws UnsupportedEncodingException {
-        ProductListItem item = selectAnyProduct();
+        ProductListItem item = getAnyProduct();
 
         assertThat(item.getName(), is(not(nullValue())));
     }
@@ -81,7 +81,7 @@ public class UC1_FindProductByCategory extends BaseTemplate {
     public void clickingOnAddToCartButtonAddsNewItemToCart()
             throws UnsupportedEncodingException, URISyntaxException {
 
-        selectAnyProduct().getAddToCartButton().click();
+        getAnyProduct().getAddToCartButton().click();
 
         assertThat(driver.getCurrentUrl(),
                 startsWith(new SubcategoryPage(driver, baseUri)
@@ -89,10 +89,13 @@ public class UC1_FindProductByCategory extends BaseTemplate {
 
     }
 
-    private ProductListItem selectAnyProduct() {
-        SubcategoryPage page = (SubcategoryPage) new SubcategoryPage(driver,
+    private ProductListItem getAnyProduct() {
+        return openSubcategoryPage().getAnyProduct();
+    }
+
+    private SubcategoryPage openSubcategoryPage() {
+        return (SubcategoryPage) new SubcategoryPage(driver,
                 baseUri, category, subCategory).navigateTo();
-        return getAnyProduct(page);
     }
 
     private CategoryPage openCategory(String cat) {
@@ -100,9 +103,5 @@ public class UC1_FindProductByCategory extends BaseTemplate {
                 cat).navigateTo();
         page.maximize();
         return page;
-    }
-
-    private ProductListItem getAnyProduct(SubcategoryPage page) {
-        return page.getProducts().findAny().get();
     }
 }
