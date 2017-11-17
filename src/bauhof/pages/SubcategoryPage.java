@@ -25,8 +25,7 @@ public class SubcategoryPage extends BasePage {
     }
 
     private static URI getUriFor(URI uri, String category, String subCategory) {
-        URI uri2 = Func.toUri(uri + "/" + category + "/" + subCategory);
-        return uri2.normalize();
+        return Func.toUri(uri + "/" + category + "/" + subCategory).normalize();
     }
 
     public Stream<ProductListItem> getProducts() {
@@ -38,6 +37,7 @@ public class SubcategoryPage extends BasePage {
         return getProducts().findAny().get();
     }
 
+    // @todo:Clickables have to be null if there is no backing webelement.
     private static ProductListItem toListItem(WebElement x) {
         WebElement btnToCart = x.findElement(By.cssSelector("button.tocart"));
         WebElement link = x.findElement(By.cssSelector("a.product-item-link"));

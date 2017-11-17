@@ -47,6 +47,7 @@ public class SearchResultsPage extends BasePage {
                 .stream().map(toListItem);
     }
 
+    // @todo:Clickables have to be null if there is no backing webelement.
     private static Function<? super WebElement, ? extends ProductListItem> toListItem = x -> new ProductListItem(
             x.findElement(By.className("price")).getText(),
             new Clickable(x.findElement(By.cssSelector("button.tocart"))::click,
