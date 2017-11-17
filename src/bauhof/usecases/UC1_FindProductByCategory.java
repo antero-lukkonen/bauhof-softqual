@@ -16,13 +16,14 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 
 import bauhof.pages.CategoryPage;
 import bauhof.pages.ProductListItem;
+import bauhof.pages.ProductPage;
 import bauhof.pages.SubcategoryPage;
 
 @TestInstance(Lifecycle.PER_CLASS)
 public class UC1_FindProductByCategory extends BaseTemplate {
 
     private String category = "aiakaubad";
-    private String subCategory;
+    private String subCategory = "aiakatted";
 
     @Test
     public void categoryPageContainsSubcategories() {
@@ -34,8 +35,6 @@ public class UC1_FindProductByCategory extends BaseTemplate {
 
     @Test
     public void clickingOnSubCategoryOpensSubcategoryPage() {
-        String subCategory = "aiakatted";
-
         CategoryPage page = openCategory(category);
         SubcategoryPage subPage = page.openSubcategory(subCategory);
 
@@ -45,8 +44,6 @@ public class UC1_FindProductByCategory extends BaseTemplate {
 
     @Test
     public void subCategoryPageContainsProductList() {
-        subCategory = "aiakatted";
-
         SubcategoryPage page = (SubcategoryPage) new SubcategoryPage(driver,
                 baseUri, category, subCategory).navigateTo();
 
@@ -70,11 +67,20 @@ public class UC1_FindProductByCategory extends BaseTemplate {
     }
 
     @Test
-    public void listItemContainsProductName()
-            throws UnsupportedEncodingException {
+    public void listItemContainsProductName() {
         ProductListItem item = getAnyProduct();
 
         assertThat(item.getName(), is(not(nullValue())));
+    }
+
+    @Test
+    public void clickingOnProductNameOpensProductPage() {
+        ProductListItem item = getAnyProduct();
+
+        item.getOpenButton().click();
+
+        assertThat(driver.getCurrentUrl(), is(new ProductPage(driver, baseUri)
+                .getUriFor(category, subCategory, item.getId()).toString()));
     }
 
     @Test
@@ -86,7 +92,6 @@ public class UC1_FindProductByCategory extends BaseTemplate {
         assertThat(driver.getCurrentUrl(),
                 startsWith(new SubcategoryPage(driver, baseUri)
                         .getUriFor(category, subCategory).toString()));
-
     }
 
     private ProductListItem getAnyProduct() {
@@ -94,8 +99,8 @@ public class UC1_FindProductByCategory extends BaseTemplate {
     }
 
     private SubcategoryPage openSubcategoryPage() {
-        return (SubcategoryPage) new SubcategoryPage(driver,
-                baseUri, category, subCategory).navigateTo();
+        return (SubcategoryPage) new SubcategoryPage(driver, baseUri, category,
+                subCategory).navigateTo();
     }
 
     private CategoryPage openCategory(String cat) {

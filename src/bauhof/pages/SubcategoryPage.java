@@ -1,7 +1,6 @@
 package bauhof.pages;
 
 import java.net.URI;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.openqa.selenium.By;
@@ -26,21 +25,28 @@ public class SubcategoryPage extends BasePage {
     }
 
     private static URI getUriFor(URI uri, String category, String subCategory) {
-        return Func.toUri(uri + "/" + category + "/" + subCategory).normalize();
+        URI uri2 = Func.toUri(uri + "/" + category + "/" + subCategory);
+        return uri2.normalize();
     }
 
     public Stream<ProductListItem> getProducts() {
         return driver.findElements(By.cssSelector(".product-item")).stream()
-                .map(toListItem);
+                .map(SubcategoryPage::toListItem);
     }
 
     public ProductListItem getAnyProduct() {
         return getProducts().findAny().get();
     }
 
-    private static Function<? super WebElement, ? extends ProductListItem> toListItem = x -> new ProductListItem(
-            x.findElement(By.className("price")).getText(),
-            new Clickable(x.findElement(By.cssSelector("button.tocart"))::click,
-                    null),
-            x.findElement(By.cssSelector("a.product-item-link")).getText());
+    private static ProductListItem toListItem(WebElement x) {
+        WebElement btnToCart = x.findElement(By.cssSelector("button.tocart"));
+        WebElement link = x.findElement(By.cssSelector("a.product-item-link"));
+        String id = Func.toUri(link.getAttribute("href")).getPath()
+                .split("/")[3];
+
+        return new ProductListItem(
+                x.findElement(By.className("price")).getText(),
+                new Clickable(btnToCart::click, null), btnToCart.getText(),
+                new Clickable(link::click, null), id);
+    }
 }

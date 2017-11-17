@@ -1,11 +1,14 @@
 package bauhof.usecases;
 
+import static org.hamcrest.CoreMatchers.endsWith;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertThat;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
-
-import static org.hamcrest.CoreMatchers.*;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -18,82 +21,94 @@ import bauhof.pages.SearchResultsPage;
 @TestInstance(Lifecycle.PER_CLASS)
 public class UC2_FindProductByKeyword extends BaseTemplate {
 
-	@Test
-	public void emptySearchRefreshesCurrentPage() {
-		HomePage page = (HomePage) new HomePage(driver, baseUri).navigateTo();
-		
-		page.waitForRefreshAfter(() -> page.searchFor(""));
-		
-		assertThat(page.getUri().toString(), is(driver.getCurrentUrl()));
-	}
+    @Test
+    public void emptySearchRefreshesCurrentPage() {
+        HomePage page = (HomePage) new HomePage(driver, baseUri).navigateTo();
 
-	@Test
-	public void searchingOpensResultsPage() throws UnsupportedEncodingException, URISyntaxException {
-		String searchedItem = "Lihvmasin BO3710 Makita";
+        page.waitForRefreshAfter(() -> page.searchFor(""));
 
-		HomePage page = (HomePage) new HomePage(driver, baseUri).navigateTo();
-		page.enterSearchText(searchedItem);
-		SearchResultsPage resultsPage = page.submitSearch();
+        assertThat(page.getUri().toString(), is(driver.getCurrentUrl()));
+    }
 
-		assertThat(driver.getCurrentUrl(), startsWith(resultsPage.getUriFor(searchedItem).toString()));
-	}
+    @Test
+    public void searchingOpensResultsPage()
+            throws UnsupportedEncodingException, URISyntaxException {
+        String searchedItem = "Lihvmasin BO3710 Makita";
 
-	@Test
-	public void resultsPageContainsSearchedItem() throws UnsupportedEncodingException, URISyntaxException {
-		String expectedProductName = "LIHVMASIN BO3710 180W MAKITA";
-		String searchString = "Lihvmasin";
+        HomePage page = (HomePage) new HomePage(driver, baseUri).navigateTo();
+        page.enterSearchText(searchedItem);
+        SearchResultsPage resultsPage = page.submitSearch();
 
-		SearchResultsPage page = searchFor(searchString);
+        assertThat(driver.getCurrentUrl(),
+                startsWith(resultsPage.getUriFor(searchedItem).toString()));
+    }
 
-		assertThat(page.getResultByName(expectedProductName), is(not(nullValue())));
-	}
+    @Test
+    public void resultsPageContainsSearchedItem()
+            throws UnsupportedEncodingException, URISyntaxException {
+        String expectedProductName = "LIHVMASIN BO3710 180W MAKITA";
+        String searchString = "Lihvmasin";
 
-	@Test
-	public void searchResultItemContainsProductName() throws UnsupportedEncodingException {
-		String searchString = "Lihvmasin";
+        SearchResultsPage page = searchFor(searchString);
 
-		ProductListItem item = getAnySearchResult(searchString);
+        assertThat(page.getResultByName(expectedProductName),
+                is(not(nullValue())));
+    }
 
-		assertThat(item.getName(), is(not(nullValue())));
-	}
+    @Test
+    public void searchResultItemContainsProductName()
+            throws UnsupportedEncodingException {
+        String searchString = "Lihvmasin";
 
-	@Test
-	public void searchResultItemContainsPriceInEuro() throws UnsupportedEncodingException {
-		String searchString = "Lihvmasin";
+        ProductListItem item = getAnySearchResult(searchString);
 
-		ProductListItem item = getAnySearchResult(searchString);
+        assertThat(item.getName(), is(not(nullValue())));
+    }
 
-		assertThat(item.getPrice(), endsWith("€"));
-	}
+    @Test
+    public void searchResultItemContainsPriceInEuro()
+            throws UnsupportedEncodingException {
+        String searchString = "Lihvmasin";
 
-	@Test
-	public void searchResultItemContainsAddToCartButton() throws UnsupportedEncodingException {
-		String searchString = "Lihvmasin";
+        ProductListItem item = getAnySearchResult(searchString);
 
-		ProductListItem item = getAnySearchResult(searchString);
+        assertThat(item.getPrice(), endsWith("€"));
+    }
 
-		assertThat(item.getAddToCartButton(), is(not(nullValue())));
-	}
+    @Test
+    public void searchResultItemContainsAddToCartButton()
+            throws UnsupportedEncodingException {
+        String searchString = "Lihvmasin";
 
-	@Test
-	public void clickingOnAddToCartButtonAddsNewItemToCart() throws UnsupportedEncodingException, URISyntaxException {		
-		String searchString = "Lihvmasin";
+        ProductListItem item = getAnySearchResult(searchString);
 
-		getAnySearchResult(searchString).getAddToCartButton().click();
+        assertThat(item.getAddToCartButton(), is(not(nullValue())));
+    }
 
-		assertThat(driver.getCurrentUrl(), startsWith(new SearchResultsPage(driver, baseUri).getUriFor(searchString).toString()));
+    @Test
+    public void clickingOnAddToCartButtonAddsNewItemToCart()
+            throws UnsupportedEncodingException, URISyntaxException {
+        String searchString = "Lihvmasin";
 
-	}
+        getAnySearchResult(searchString).getAddToCartButton().click();
 
-	private ProductListItem getAnySearchResult(String searchString) throws UnsupportedEncodingException {
-		return searchFor(searchString).getFirstResult();		
-	}
+        assertThat(driver.getCurrentUrl(),
+                startsWith(new SearchResultsPage(driver, baseUri)
+                        .getUriFor(searchString).toString()));
+    }
 
-	private SearchResultsPage searchFor(String searchString) throws UnsupportedEncodingException {
-		try {
-			return new SearchResultsPage(this.driver, this.baseUri).searchFor(searchString);
-		} catch (URISyntaxException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    private ProductListItem getAnySearchResult(String searchString)
+            throws UnsupportedEncodingException {
+        return searchFor(searchString).getFirstResult();
+    }
+
+    private SearchResultsPage searchFor(String searchString)
+            throws UnsupportedEncodingException {
+        try {
+            return new SearchResultsPage(this.driver, this.baseUri)
+                    .searchFor(searchString);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

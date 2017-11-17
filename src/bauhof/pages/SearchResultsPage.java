@@ -51,5 +51,9 @@ public class SearchResultsPage extends BasePage {
             x.findElement(By.className("price")).getText(),
             new Clickable(x.findElement(By.cssSelector("button.tocart"))::click,
                     null),
-            x.findElement(By.cssSelector("a.product-item-link")).getText());
+            x.findElement(By.cssSelector("a.product-item-link")).getText(),
+            new Clickable(
+                    x.findElement(By.cssSelector("a.product-item-link"))::click,
+                    null),
+            null);
 }
