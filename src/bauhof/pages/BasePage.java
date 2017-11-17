@@ -32,6 +32,10 @@ public class BasePage {
         return uri.normalize();
     }
 
+    public String getPageSource() {
+        return driver.getPageSource();
+    }
+
     public void waitForRefreshAfter(Runnable action) {
         WebElement element = driver.findElement(By.tagName("body"));
 
