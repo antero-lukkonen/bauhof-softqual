@@ -29,38 +29,32 @@ public class UC1_FindProductByCategory extends BaseTemplate {
     public void categoryPageContainsSubcategories() {
         CategoryPage page = openCategory(category);
 
-        assertThat(page.getSubCategories().findAny().get(),
-                is(not(nullValue())));
+        assertThat(page.getSubCategories().findAny().get(), is(not(nullValue())));
     }
 
     @Test
     public void clickingOnSubCategoryOpensSubcategoryPage() {
-        CategoryPage page = openCategory(category);
-        SubcategoryPage subPage = page.openSubcategory(subCategory);
+        SubcategoryPage subCategoryPage = openCategory(category).openSubcategory(subCategory);
 
-        assertThat(driver.getCurrentUrl(),
-                is(subPage.getUriFor(category, subCategory).toString()));
+        assertThat(driver.getCurrentUrl(), is(urlFor(subCategoryPage)));
     }
 
     @Test
     public void subCategoryPageContainsProductList() {
-        SubcategoryPage page = (SubcategoryPage) new SubcategoryPage(driver,
-                baseUri, category, subCategory).navigateTo();
+        SubcategoryPage page = (SubcategoryPage) new SubcategoryPage(driver, baseUri, category, subCategory).navigateTo();
 
         assertThat(page.getAnyProduct(), is(not(nullValue())));
     }
 
     @Test
-    public void listItemContainsPriceInEuro()
-            throws UnsupportedEncodingException {
+    public void listItemContainsPriceInEuro() throws UnsupportedEncodingException {
         ProductListItem item = getAnyProduct();
 
         assertThat(item.getPrice(), endsWith("€"));
     }
 
     @Test
-    public void listItemContainsAddToCartButton()
-            throws UnsupportedEncodingException {
+    public void listItemContainsAddToCartButton() throws UnsupportedEncodingException {
         ProductListItem item = getAnyProduct();
 
         assertThat(item.getAddToCartButton(), is(not(nullValue())));
@@ -79,19 +73,15 @@ public class UC1_FindProductByCategory extends BaseTemplate {
 
         item.getOpenButton().click();
 
-        assertThat(driver.getCurrentUrl(), is(new ProductPage(driver, baseUri)
-                .getUriFor(category, subCategory, item.getId()).toString()));
+        assertThat(driver.getCurrentUrl(), is(urlFor(item)));
     }
 
     @Test
-    public void clickingOnAddToCartButtonAddsNewItemToCart()
-            throws UnsupportedEncodingException, URISyntaxException {
+    public void clickingOnAddToCartButtonAddsNewItemToCart() throws UnsupportedEncodingException, URISyntaxException {
 
         getAnyProduct().getAddToCartButton().click();
 
-        assertThat(driver.getCurrentUrl(),
-                startsWith(new SubcategoryPage(driver, baseUri)
-                        .getUriFor(category, subCategory).toString()));
+        assertThat(driver.getCurrentUrl(), startsWith(new SubcategoryPage(driver, baseUri).getUriFor(category, subCategory).toString()));
     }
 
     private ProductListItem getAnyProduct() {
@@ -99,14 +89,21 @@ public class UC1_FindProductByCategory extends BaseTemplate {
     }
 
     private SubcategoryPage openSubcategoryPage() {
-        return (SubcategoryPage) new SubcategoryPage(driver, baseUri, category,
-                subCategory).navigateTo();
+        return (SubcategoryPage) new SubcategoryPage(driver, baseUri, category, subCategory).navigateTo();
     }
 
     private CategoryPage openCategory(String cat) {
-        CategoryPage page = (CategoryPage) new CategoryPage(driver, baseUri,
-                cat).navigateTo();
+        CategoryPage page = (CategoryPage) new CategoryPage(driver, baseUri, cat).navigateTo();
         page.maximize();
         return page;
     }
+
+    private String urlFor(ProductListItem item) {
+        return new ProductPage(driver, baseUri).getUriFor(category, subCategory, item.getId()).toString();
+    }
+
+    private String urlFor(SubcategoryPage subPage) {
+        return subPage.getUriFor(category, subCategory).toString();
+    }
+
 }
