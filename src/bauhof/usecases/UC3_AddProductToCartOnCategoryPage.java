@@ -8,7 +8,6 @@ import static org.junit.Assert.assertThat;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
-import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import org.hamcrest.Matcher;
@@ -18,7 +17,6 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 
 import bauhof.pages.CartItem;
 import bauhof.pages.CartPage;
-import bauhof.pages.ModalWindow;
 import bauhof.pages.ProductListItem;
 import bauhof.pages.SubcategoryPage;
 
@@ -60,24 +58,13 @@ public class UC3_AddProductToCartOnCategoryPage extends BaseTemplate {
         CartPage page = openCartPage();
 
         Stream<CartItem> items = page.getCartItems();
-        CartItem item = items.filter(byName(product.getName())).findFirst().get();
+        CartItem item = items.filter(CartPage.itemByName(product.getName())).findFirst().get();
 
         assertThat(item, is(not(nullValue())));
     }
 
-    private Predicate<? super CartItem> byName(String name) {
-        return (Predicate<? super CartItem>) x -> x.getName().toLowerCase().equals(name.toLowerCase());
-    }
-
     private ProductListItem addAnyProductToCart() {
-        SubcategoryPage page = openSubcategoryPage();
-        ProductListItem product = page.getAnyProduct();
-        product.addToCart();
-
-        ModalWindow modal = page.getModalWindow();
-        modal.clickPrimary();
-
-        return product;
+        return openSubcategoryPage().addAnyProductToCart();
     }
 
     private Matcher<String> isCartUrl() {

@@ -43,4 +43,14 @@ public class SubcategoryPage extends BasePage {
         modal.waitUntilVisible();
         return modal;
     }
+
+    public ProductListItem addAnyProductToCart() {
+        ProductListItem product = getAnyProduct();
+        product.addToCart();
+    
+        ModalWindow modal = getModalWindow();
+        modal.clickPrimary();
+    
+        return product;
+    }
 }

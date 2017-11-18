@@ -1,6 +1,7 @@
 package bauhof.pages;
 
 import java.net.URI;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import org.openqa.selenium.By;
@@ -20,6 +21,11 @@ public class CartPage extends BasePage {
     }
 
     private static CartItem toItem(WebElement element) {
-        return new CartItem(element.findElement(By.cssSelector(".product-item-name>a")).getText());
+        return new CartItem(element.findElement(By.cssSelector(".product-item-name>a")).getText(),
+                Func.toClickable(element.findElement(By.className("action-delete"))));
+    }
+
+    public static Predicate<? super CartItem> itemByName(String name) {
+        return (Predicate<? super CartItem>) x -> x.getName().toLowerCase().equals(name.toLowerCase());
     }
 }
