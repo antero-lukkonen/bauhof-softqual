@@ -8,8 +8,8 @@ public class ProductListItem {
     private Clickable openButton;
     private String id;
 
-    public ProductListItem(String price, Clickable addToCartButton, String name,
-            Clickable openButton, String id) {
+    public ProductListItem(String id, String name, String price,
+            Clickable addToCartButton, Clickable openButton) {
         this.price = price;
         this.addToCartButton = addToCartButton;
         this.name = name;

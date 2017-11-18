@@ -66,24 +66,6 @@ public class UC2_FindProductByKeyword extends BaseTemplate {
         assertThat(item.getPrice(), endsWith("€"));
     }
 
-    @Test
-    public void searchResultItemContainsAddToCartButton() {
-        String searchString = "Lihvmasin";
-
-        ProductListItem item = getAnySearchResult(searchString);
-
-        assertThat(item.getAddToCartButton(), is(not(nullValue())));
-    }
-
-    @Test
-    public void clickingOnAddToCartButtonAddsNewItemToCart() {
-        String searchString = "Lihvmasin";
-
-        getAnySearchResult(searchString).getAddToCartButton().click();
-
-        assertThat(driver.getCurrentUrl(), startsWith(new SearchResultsPage(driver, baseUri).getUriFor(searchString).toString()));
-    }
-
     private ProductListItem getAnySearchResult(String searchString) {
         return searchFor(searchString).getFirstResult();
     }

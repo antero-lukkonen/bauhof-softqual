@@ -4,6 +4,15 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
+import java.util.function.Supplier;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+
+import com.google.common.base.Optional;
+
+import bauhof.pages.Clickable;
+import bauhof.pages.ProductListItem;
 
 public class Func {
     public static URI toUri(String x) {
@@ -20,5 +29,15 @@ public class Func {
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static ProductListItem toProductListItem(WebElement x, Supplier<String> getId) {
+        WebElement btnToCart = x.findElement(By.cssSelector(".tocart"));
+        WebElement link = x.findElement(By.cssSelector("a.product-item-link"));
+        return new ProductListItem(getId.get(), link.getText(), x.findElement(By.className("price")).getText(), toClickable(btnToCart), toClickable(link));
+    }
+
+    private static Clickable toClickable(WebElement element) {
+        return Optional.of(element).transform(y -> new Clickable(y::click, null)).get();
     }
 }

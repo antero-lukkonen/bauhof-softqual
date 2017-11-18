@@ -1,13 +1,11 @@
 package bauhof.pages;
 
 import java.net.URI;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 
 import utils.Func;
 
@@ -17,8 +15,7 @@ public class SearchResultsPage extends BasePage {
     }
 
     public URI getUriFor(String searchedItem) {
-        return Func.toUri(this.getUri() + "/catalogsearch/result/?q="
-                + Func.toUtf8UriPart(searchedItem)).normalize();
+        return Func.toUri(this.getUri() + "/catalogsearch/result/?q=" + Func.toUtf8UriPart(searchedItem)).normalize();
     }
 
     public SearchResultsPage searchFor(String searchedItem) {
@@ -27,8 +24,7 @@ public class SearchResultsPage extends BasePage {
     }
 
     public ProductListItem getResultByName(String name) {
-        return getResultBy(
-                x -> x.getName().toLowerCase().equals(name.toLowerCase()));
+        return getResultBy(x -> x.getName().toLowerCase().equals(name.toLowerCase()));
     }
 
     public ProductListItem getFirstResult() {
@@ -40,18 +36,6 @@ public class SearchResultsPage extends BasePage {
     }
 
     private Stream<ProductListItem> getResults() {
-        return driver.findElements(By.cssSelector("div.product-item-info"))
-                .stream().map(toListItem);
+        return driver.findElements(By.cssSelector("div.product-item-info")).stream().map(x -> Func.toProductListItem(x, () -> null));
     }
-
-    // @todo:Clickables have to be null if there is no backing webelement.
-    private static Function<? super WebElement, ? extends ProductListItem> toListItem = x -> new ProductListItem(
-            x.findElement(By.className("price")).getText(),
-            new Clickable(x.findElement(By.cssSelector("button.tocart"))::click,
-                    null),
-            x.findElement(By.cssSelector("a.product-item-link")).getText(),
-            new Clickable(
-                    x.findElement(By.cssSelector("a.product-item-link"))::click,
-                    null),
-            null);
 }

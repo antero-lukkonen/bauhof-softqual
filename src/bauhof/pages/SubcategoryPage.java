@@ -1,6 +1,7 @@
 package bauhof.pages;
 
 import java.net.URI;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.openqa.selenium.By;
@@ -15,8 +16,7 @@ public class SubcategoryPage extends BasePage {
         super(driver, uri);
     }
 
-    public SubcategoryPage(WebDriver driver, URI baseUri, String category,
-            String subCategory) {
+    public SubcategoryPage(WebDriver driver, URI baseUri, String category, String subCategory) {
         super(driver, getUriFor(baseUri, category, subCategory));
     }
 
@@ -29,24 +29,12 @@ public class SubcategoryPage extends BasePage {
     }
 
     public Stream<ProductListItem> getProducts() {
+        Function<WebElement, String> toId = x -> Func.toUri(x.getAttribute("href")).getPath().split("/")[3];
         return driver.findElements(By.cssSelector(".product-item")).stream()
-                .map(SubcategoryPage::toListItem);
+                .map(x -> Func.toProductListItem(x, () -> toId.apply(x.findElement(By.cssSelector("a.product-item-link")))));
     }
 
     public ProductListItem getAnyProduct() {
         return getProducts().findAny().get();
-    }
-
-    // @todo:Clickables have to be null if there is no backing webelement.
-    private static ProductListItem toListItem(WebElement x) {
-        WebElement btnToCart = x.findElement(By.cssSelector("button.tocart"));
-        WebElement link = x.findElement(By.cssSelector("a.product-item-link"));
-        String id = Func.toUri(link.getAttribute("href")).getPath()
-                .split("/")[3];
-
-        return new ProductListItem(
-                x.findElement(By.className("price")).getText(),
-                new Clickable(btnToCart::click, null), btnToCart.getText(),
-                new Clickable(link::click, null), id);
     }
 }
