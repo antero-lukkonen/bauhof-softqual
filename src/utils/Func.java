@@ -7,7 +7,10 @@ import java.net.URLEncoder;
 import java.util.function.Supplier;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.google.common.base.Optional;
 
@@ -37,7 +40,11 @@ public class Func {
         return new ProductListItem(getId.get(), link.getText(), x.findElement(By.className("price")).getText(), toClickable(btnToCart), toClickable(link));
     }
 
-    private static Clickable toClickable(WebElement element) {
+    public static Clickable toClickable(WebElement element) {
         return Optional.of(element).transform(y -> new Clickable(y::click, null)).get();
+    }
+
+    public static void waitForVisible(WebElement x, WebDriver driver) {
+        new WebDriverWait(driver, 10).until(ExpectedConditions.visibilityOf(x));
     }
 }

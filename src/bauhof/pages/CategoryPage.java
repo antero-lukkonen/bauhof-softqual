@@ -9,8 +9,6 @@ import java.util.stream.Stream;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import utils.Func;
 
@@ -22,13 +20,10 @@ public class CategoryPage extends BasePage {
 
     public Stream<Clickable> getSubCategories() {
         Function<WebElement, String> toCategoryName = x -> Func.toUri(x.getAttribute("href")).getPath().split("/")[2];
-        Function<WebElement, Void> waitForVisible = x -> {
-            new WebDriverWait(driver, 10).until(ExpectedConditions.visibilityOf(x));
-            return null;
-        };
+
         Function<? super WebElement, ? extends Clickable> toClickable = x -> {
             return new Clickable(() -> {
-                waitForVisible.apply(x);
+                Func.waitForVisible(x, driver);
                 x.click();
             }, toCategoryName.apply(x));
         };

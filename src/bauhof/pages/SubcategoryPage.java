@@ -37,4 +37,10 @@ public class SubcategoryPage extends BasePage {
     public ProductListItem getAnyProduct() {
         return getProducts().findAny().get();
     }
+
+    public ModalWindow getModalWindow() {
+        ModalWindow modal = new ModalWindow(driver.findElement(By.className("modal-popup")), this.driver);
+        modal.waitUntilVisible();
+        return modal;
+    }
 }

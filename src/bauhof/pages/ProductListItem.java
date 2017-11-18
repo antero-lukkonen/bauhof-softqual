@@ -8,8 +8,7 @@ public class ProductListItem {
     private Clickable openButton;
     private String id;
 
-    public ProductListItem(String id, String name, String price,
-            Clickable addToCartButton, Clickable openButton) {
+    public ProductListItem(String id, String name, String price, Clickable addToCartButton, Clickable openButton) {
         this.price = price;
         this.addToCartButton = addToCartButton;
         this.name = name;
@@ -35,5 +34,9 @@ public class ProductListItem {
 
     public String getId() {
         return this.id;
+    }
+
+    public void addToCart() {
+        getAddToCartButton().click();
     }
 }

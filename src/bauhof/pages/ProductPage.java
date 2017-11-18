@@ -16,10 +16,8 @@ public class ProductPage extends BasePage {
         return getUriFor(this.getUri(), category, subCategory, id);
     }
 
-    private static URI getUriFor(URI uri, String category, String subCategory,
-            String id) {
-        return Func.toUri(uri + "/" + category + "/" + subCategory + "/" + id)
-                .normalize();
+    private static URI getUriFor(URI uri, String category, String subCategory, String id) {
+        return Func.toUri(uri + "/" + category + "/" + subCategory + "/" + id).normalize();
     }
 
 }
