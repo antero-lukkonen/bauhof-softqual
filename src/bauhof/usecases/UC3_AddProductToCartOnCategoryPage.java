@@ -8,12 +8,15 @@ import static org.junit.Assert.assertThat;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 
+import bauhof.pages.CartItem;
 import bauhof.pages.CartPage;
 import bauhof.pages.ModalWindow;
 import bauhof.pages.ProductListItem;
@@ -44,7 +47,29 @@ public class UC3_AddProductToCartOnCategoryPage extends BaseTemplate {
     }
 
     @Test
-    public void clickingOnPrimaryButtonInModalWindowAddsProductToCart() {
+    public void clickingOnPrimaryButtonInModalWindowOpensTheCartPage() {
+        addAnyProductToCart();
+
+        assertThat(driver.getCurrentUrl(), isCartUrl());
+    }
+
+    @Test
+    public void clickingOnPrimaryButtonInModalWindowAddsTheProductToCart() {
+        ProductListItem product = addAnyProductToCart();
+
+        CartPage page = openCartPage();
+
+        Stream<CartItem> items = page.getCartItems();
+        CartItem item = items.filter(byName(product.getName())).findFirst().get();
+
+        assertThat(item, is(not(nullValue())));
+    }
+
+    private Predicate<? super CartItem> byName(String name) {
+        return (Predicate<? super CartItem>) x -> x.getName().toLowerCase().equals(name.toLowerCase());
+    }
+
+    private ProductListItem addAnyProductToCart() {
         SubcategoryPage page = openSubcategoryPage();
         ProductListItem product = page.getAnyProduct();
         product.addToCart();
@@ -52,7 +77,7 @@ public class UC3_AddProductToCartOnCategoryPage extends BaseTemplate {
         ModalWindow modal = page.getModalWindow();
         modal.clickPrimary();
 
-        assertThat(driver.getCurrentUrl(), isCartUrl());
+        return product;
     }
 
     private Matcher<String> isCartUrl() {
@@ -69,5 +94,9 @@ public class UC3_AddProductToCartOnCategoryPage extends BaseTemplate {
 
     private SubcategoryPage openSubcategoryPage() {
         return (SubcategoryPage) new SubcategoryPage(driver, baseUri, category, subCategory).navigateTo();
+    }
+
+    private CartPage openCartPage() {
+        return (CartPage) new CartPage(driver, baseUri).navigateTo();
     }
 }

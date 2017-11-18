@@ -21,6 +21,8 @@ public class ModalWindow {
     }
 
     public void clickPrimary() {
-        this.root.findElement(By.className("primary")).click();
+        WebElement primaryButton = this.root.findElement(By.className("primary"));
+        Func.waitForVisible(primaryButton, driver);
+        primaryButton.click();
     }
 }
