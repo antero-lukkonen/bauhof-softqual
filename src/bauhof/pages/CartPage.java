@@ -1,6 +1,7 @@
 package bauhof.pages;
 
 import java.net.URI;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -21,10 +22,20 @@ public class CartPage extends BasePage {
         return this.driver.findElements(By.cssSelector("tbody.item")).stream().map(CartPage::toItem);
     }
 
+    public CartSummary getSummary() {
+        return Optional.of(this.driver.findElement(By.cssSelector(".cart-summary"))).map(CartPage::toSummary).orElse(null);
+    }
+
     private static CartItem toItem(WebElement element) {
         return new CartItem(element.findElement(By.cssSelector(".product-item-name>a")).getText(),
                 Func.toClickable(element.findElement(By.className("action-delete"))), Func.toClickable(element.findElement(By.cssSelector(".qty .plus"))),
                 Integer.parseInt(element.findElement(By.cssSelector("input.qty")).getAttribute("value")));
+    }
+
+    private static CartSummary toSummary(WebElement element) {
+        return new CartSummary(element.findElement(By.cssSelector(".none-tax-total>.amount>.price")).getText(),
+                element.findElement(By.cssSelector(".taxed>.amount>.price")).getText(), element.findElement(By.cssSelector(".taxed-total .price")).getText(),
+                element.findElement(By.cssSelector(".total-in-sum>.tb-value")).getText());
     }
 
     public static Predicate<? super CartItem> itemByName(String name) {
