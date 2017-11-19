@@ -9,6 +9,7 @@ import java.util.function.Supplier;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -45,6 +46,10 @@ public class Func {
     }
 
     public static void waitForVisible(WebElement x, WebDriver driver) {
-        new WebDriverWait(driver, 10).until(ExpectedConditions.visibilityOf(x));
+        waitFor(driver, ExpectedConditions.visibilityOf(x));
+    }
+
+    public static void waitFor(WebDriver driver, ExpectedCondition<?> condition) {
+        new WebDriverWait(driver, 10).until(condition);
     }
 }

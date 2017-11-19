@@ -17,12 +17,14 @@ public class CartPage extends BasePage {
     }
 
     public Stream<CartItem> getCartItems() {
+        Func.waitForVisible(this.driver.findElement(By.cssSelector("table.cart")), driver);
         return this.driver.findElements(By.cssSelector("tbody.item")).stream().map(CartPage::toItem);
     }
 
     private static CartItem toItem(WebElement element) {
         return new CartItem(element.findElement(By.cssSelector(".product-item-name>a")).getText(),
-                Func.toClickable(element.findElement(By.className("action-delete"))));
+                Func.toClickable(element.findElement(By.className("action-delete"))), Func.toClickable(element.findElement(By.cssSelector(".qty .plus"))),
+                Integer.parseInt(element.findElement(By.cssSelector("input.qty")).getAttribute("value")));
     }
 
     public static Predicate<? super CartItem> itemByName(String name) {
