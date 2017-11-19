@@ -22,9 +22,16 @@ public class UC2_FindProductByKeyword extends BaseTemplate {
     public void emptySearchRefreshesCurrentPage() {
         HomePage page = (HomePage) new HomePage(driver, baseUri).navigateTo();
 
-        page.waitForRefreshAfter(() -> page.searchFor(""));
+        page.waitForRefreshAfter(() -> page.searchFor(" "));
 
         assertThat(page.getUri().toString(), is(driver.getCurrentUrl()));
+    }
+
+    @Test
+    public void searchingForANonExistingProductDisplaysEmptyResults() {
+        SearchResultsPage page = searchFor("notexistingproduct");
+
+        assertThat(page.getNotice(), is("Otsing ei leidnud tulemusi."));
     }
 
     @Test

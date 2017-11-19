@@ -38,4 +38,8 @@ public class SearchResultsPage extends BasePage {
     private Stream<ProductListItem> getResults() {
         return driver.findElements(By.cssSelector("div.product-item-info")).stream().map(x -> Func.toProductListItem(x, () -> null));
     }
+
+    public String getNotice() {
+        return driver.findElement(By.cssSelector(".message.notice>div")).getText();
+    }
 }
